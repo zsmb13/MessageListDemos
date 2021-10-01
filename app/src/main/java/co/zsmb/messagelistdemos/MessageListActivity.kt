@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.messages.items.Bottom
@@ -55,7 +54,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import kotlin.math.abs
 
-@OptIn(ExperimentalCoilApi::class)
 class MessageListActivity : ComponentActivity() {
 
     companion object {
@@ -220,18 +218,20 @@ class MessageListActivity : ComponentActivity() {
     @Composable
     fun TeamChatItemContent(messageItem: MessageItem) {
         val message = messageItem.message
+        val firstItem = messageItem.groupPosition == Top || messageItem.groupPosition == None
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
                 .widthIn(max = 300.dp)
         ) {
-            if (messageItem.groupPosition == Top) {
+            if (firstItem) {
                 Spacer(Modifier.padding(4.dp))
             }
 
             Row {
-                if (messageItem.groupPosition == Top) {
+                if (firstItem) {
                     Image(
                         modifier = Modifier
                             .size(36.dp)
@@ -245,7 +245,7 @@ class MessageListActivity : ComponentActivity() {
                 }
 
                 Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-                    if (messageItem.groupPosition == Top) {
+                    if (firstItem) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = message.user.name,
