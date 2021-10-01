@@ -19,7 +19,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomain
 
-const val SAMPLE_CID = "messaging:sample-app-channel-3"
+const val SAMPLE_CID = "messaging:tutorial-app-channel-3"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
