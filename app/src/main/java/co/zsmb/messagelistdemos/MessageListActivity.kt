@@ -1,6 +1,5 @@
 package co.zsmb.messagelistdemos
 
-import android.content.ClipboardManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -38,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
@@ -55,7 +53,6 @@ import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
 import kotlin.math.abs
 
 @OptIn(ExperimentalCoilApi::class)
@@ -70,15 +67,7 @@ class MessageListActivity : ComponentActivity() {
 
         val mode = intent.getStringExtra(KEY_MODE)
 
-        val vmFactory = MessagesViewModelFactory(
-            this,
-            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
-            ChatClient.instance(),
-            ChatDomain.instance(),
-            SAMPLE_CID,
-            enforceUniqueReactions = false,
-            messageLimit = 30,
-        )
+        val vmFactory = MessagesViewModelFactory(context = this, channelId = SAMPLE_CID)
         val listViewModel: MessageListViewModel by viewModels { vmFactory }
 
         setContent {
@@ -168,7 +157,7 @@ class MessageListActivity : ComponentActivity() {
                         border = null,
                         content = {
                             Column {
-                                MessageAttachmentsContent(messageItem = messageItem, onLongItemClick = {})
+                                MessageAttachmentsContent(message = messageItem.message, onLongItemClick = {})
 
                                 if (message.text.isNotEmpty()) {
                                     Text(
