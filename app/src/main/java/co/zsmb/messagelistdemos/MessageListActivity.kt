@@ -36,13 +36,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.state.messages.items.Bottom
+import io.getstream.chat.android.compose.state.messages.items.DateSeparator
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
-import io.getstream.chat.android.compose.state.messages.items.Middle
-import io.getstream.chat.android.compose.state.messages.items.None
-import io.getstream.chat.android.compose.state.messages.items.Top
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
@@ -80,12 +82,17 @@ class MessageListActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         viewModel = listViewModel,
                         itemContent = { item ->
-                            when (mode) {
-                                "colorful" -> ColorfulChatItemContent(item)
-                                "livestream" -> LiveStreamItemContent(item)
-                                "team" -> TeamChatItemContent(item)
+                            when (item) {
+                                is MessageItem -> {
+                                    when (mode) {
+                                        "colorful" -> ColorfulChatItemContent(item)
+                                        "livestream" -> LiveStreamItemContent(item)
+                                        "team" -> TeamChatItemContent(item)
+                                    }
+                                }
+                                is DateSeparator -> Unit
                             }
-                        }
+                        },
                     )
                 }
             }
@@ -98,6 +105,7 @@ class MessageListActivity : ComponentActivity() {
         user: User,
     ) {
         if (position == Bottom || position == None) {
+            val isCurrentUser = user.id == ChatClient.instance().getCurrentUser()?.id
             UserAvatar(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
@@ -105,7 +113,8 @@ class MessageListActivity : ComponentActivity() {
                     .clip(CircleShape)
                     .background(Color.LightGray)
                     .align(Alignment.Bottom),
-                user = user
+                user = user,
+                showOnlineIndicator = !isCurrentUser,
             )
         } else {
             Spacer(modifier = Modifier.width(40.dp))
